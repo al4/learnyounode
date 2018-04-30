@@ -2,23 +2,38 @@
 
 var http = require('http');
 
-var urls = [];
+var urls = process.argv.slice(2);
 
-for (var i=0; i < process.argv.length; i++) {
-    if (i < 2) {
-        continue
+var results = []
+var count = 0
+
+function main(urls) {
+    for (let i=0; i < urls.length; i++) {
+        httpGet(i);
     }
-    urls.push(process.argv[i];
 }
 
+function printResults() {
+    for (let i=0; i < results.length; i++) {
+        console.log(results[i])
+    }
+}
 
-//http.get(url, function(response) {
-//    var all_data = '';
-//    response.setEncoding('utf8').on("data", function(chunk) {
-//        all_data += chunk.toString();
-//    });
-//    response.on("end", function() {
-//        console.log(all_data.length);
-//        console.log(all_data);
-//    });
-//});
+function httpGet(index) {
+    http.get(urls[index], function(response) {
+        var data = '';
+        response.setEncoding('utf8').on("data", function(chunk) {
+            data += chunk.toString();
+        });
+        response.on("end", function() {
+            results[index] = data
+            count++
+
+            if (count === urls.length) {
+                printResults()
+            }
+        });
+    });
+}
+
+main(urls)
